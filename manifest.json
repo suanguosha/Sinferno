@@ -1,0 +1,29 @@
+{
+    "name": "Sinferno",
+    "version": "1.8.1",
+    "description": "Sinferno(Sanguosha is inferno) is a visual aid that helps to ban excluded characters when you play campaigns with your friends. You can customize your own rule set with a simple JSON file. This project is inspired by Reres.",
+    "manifest_version": 2,
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_title": "Sinferno",
+        "default_popup": "popup.html"
+    },
+    "options_page": "options.html",
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": true
+    },
+    "icons":
+    {
+        "16": "icon.png",
+        "48": "icon48.png"
+    },
+    "permissions": [
+        "tabs",
+        "webRequest",
+        "webRequestBlocking",
+        "<all_urls>",
+        "unlimitedStorage"
+    ],
+    "update_url": "http://clients2.google.com/service/update2/crx"
+} 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html ng-app="sgs">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/popup.css" />
+    <script type="text/javascript" src="js/angular-resource.js"></script>
+    <script type="text/javascript" src="js/angular.js"></script>
+    <script type="text/javascript" src="js/popup.js"></script>
+  </head>
+  <body ng-controller="mapListCtrl">
+    <div class="container d-flex flex-column">
+        <button
+          tabindex="-1"
+          class="btn btn-sm"
+          ng-class="switch.enable ? 'btn-success': 'btn-warning'"
+          ng-click="toggleRules()"
+        >
+          {{switch.switchText}}
+        </button>
+        <button
+          class="btn btn-sm mt-1"
+          ng-class="updateStatus.success ? 'btn-success': 'btn-primary'"
+          type="button"
+          ng-click="updateRules()"
+        >
+          <span
+            ng-if="updateStatus.loading"
+            class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+          更新规则
+        </button>
+
+        <a
+          href="options.html"
+          target="_blank"
+          tabindex="-1"
+          class="btn btn-primary btn-sm mt-1"
+          >管理规则</a
+        >
+        <a
+          href="https://github.com/LDY681"
+          target="_blank"
+          tabindex="-1"
+          class="btn btn-primary btn-sm mt-1"
+          >赞助作者</a
+        >
+
+    </div>
+  </body>
+</html>

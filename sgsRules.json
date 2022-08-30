@@ -1,0 +1,12 @@
+[
+    {
+        "req":"^https?:\\/\\/.*test.com",
+        "res":"http://google.com",
+        "checked":false
+    },
+    {
+        "req":".*zssanguo.com",
+        "res":"http://suanguosha.com",
+        "checked":true
+    }
+]
