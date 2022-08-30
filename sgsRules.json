@@ -1,7 +1,7 @@
 [
     {
         "req":"^https?:\\/\\/.*test.com",
-        "res":"http://google.com",
+        "res":"http://www.sanguosha.com",
         "checked":false
     },
     {

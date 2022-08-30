@@ -5,12 +5,12 @@
     <title></title>
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/popup.css" />
-    <script type="text/javascript" src="js/angular-resource.js"></script>
     <script type="text/javascript" src="js/angular.js"></script>
     <script type="text/javascript" src="js/popup.js"></script>
   </head>
   <body ng-controller="mapListCtrl">
     <div class="container d-flex flex-column">
+        <p class="fw-semibold text-center">三国杀群内助手</p>
         <button
           tabindex="-1"
           class="btn btn-sm"
@@ -20,35 +20,42 @@
           {{switch.switchText}}
         </button>
         <button
-          class="btn btn-sm mt-1"
-          ng-class="updateStatus.success ? 'btn-success': 'btn-primary'"
+          class="btn btn-sm mt-2"
+          ng-class="updateStatus.success ? 'btn-success': 'btn-danger'"
           type="button"
           ng-click="updateRules()"
         >
           <span
-            ng-if="updateStatus.loading"
+            ng-show="updateStatus.loading"
             class="spinner-border spinner-border-sm"
             role="status"
-            aria-hidden="true"
           ></span>
-          更新规则
+          <span
+            ng-show="updateStatus.showResult && updateStatus.success"
+          >√ 更新成功!</span>
+          <span
+            ng-show="updateStatus.showResult && !updateStatus.success"
+          >X 更新失败</span>
+          <span
+            ng-show="!updateStatus.showResult"
+          >更新规则</span>
         </button>
 
         <a
           href="options.html"
           target="_blank"
           tabindex="-1"
-          class="btn btn-primary btn-sm mt-1"
+          class="btn btn-primary btn-sm mt-2"
           >管理规则</a
         >
         <a
           href="https://github.com/LDY681"
           target="_blank"
           tabindex="-1"
-          class="btn btn-primary btn-sm mt-1"
+          class="btn btn-primary btn-sm mt-2"
           >赞助作者</a
         >
-
+        <p class="text-end fs-6 mt-2">作者：瓜</p>
     </div>
   </body>
 </html>

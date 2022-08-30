@@ -29,27 +29,29 @@ sgs.controller('mapListCtrl', function ($scope) {
     // 更新规则状态
     $scope.updateStatus = {
         loading :false,
-        success: false,
+        success: true,
+        showResult: false
     }
 
     // 点击更新规则
     $scope.updateRules = function () {
         $scope.updateStatus.loading = true;
-        fetch("https://github.com/LDY681/zssanguo_2.0/blob/main/package.json").then((res) => {
-            console.log(res.ok);
-            if (res.ok) {
-                res.json().then((r) => {
-                    console.log(r);
-                  });
-            }
-        })
-        
-        // setTimeout(() => {
-        //     $scope.updateStatus.loading = false;
-        //     $scope.updateStatus.success = true;
-        //     setTimeout(() => {
-        //         $scope.updateStatus.success = false;
-        //     }, 1000)
-        // }, 1000);
+        $scope.updateStatus.showResult = false;
+        fetch("https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json?timestamp=" + Math.random()).then((res) => {
+            // scope $apply 防止angular不更新view
+            $scope.$apply(function () {
+                $scope.updateStatus.loading = false;
+                if (res.ok) {
+                    $scope.updateStatus.success = true;
+                    $scope.updateStatus.showResult = true;
+                    res.json().then((res) => {
+                        console.log(res)
+                    });
+                } else {
+                    $scope.updateStatus.success = false;
+                    $scope.updateStatus.showResult = true;
+                }
+            })
+        });
     };
 });
