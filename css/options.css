@@ -7,10 +7,6 @@ body {
   margin-bottom: 0px!important;
   color: #999999;
 }
-.fr {
-  float: right;
-  margin-right: 10px;
-}
 .table {
   margin-top: 10px;
 }
@@ -21,14 +17,14 @@ body {
   position: relative;
 }
 .btnBox .file {
-  width: 54px;
-  height: 34px;
+  /* width: 45px;
+  height: 45px; */
   overflow: hidden;
   position: relative;
 }
 .btnBox .file input {
   position: absolute;
-  width: 67px;
+  width: 167px;
   height: 994px;
   bottom: 0px;
   right: 0px;

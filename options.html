@@ -10,14 +10,16 @@
     <script type="text/javascript" src="js/options.js"></script>
 </head>
 <body ng-controller="mapListCtrl">
-<div class="navbar navbar-inverse navbar-fixed-top top">
+<div class="navbar navbar-dark bg-dark">
     <div class="container">
-        <div class="btnBox">
-            <span class="h2"><a title="view in the github" href="https://github.com/hanan198501/ReRes" target="_blank">ReRes</a></span>
-            <small> &nbsp;&nbsp;&nbsp;&nbsp;修改禁将规则.</small>
-            <button class="btn btn-primary fr" ng-click="export()">导出</button>
-            <div class="file fr"><button class="btn btn-primary">导入</button><input type="file" id="jsonFile"/></div>
-            <button class="btn btn-primary fr" ng-click="addRule()"> + </button>
+        <div class="btnBox d-flex flex-row">
+            <span class="h2 text-light"><a class="text-decoration-none" title="三国杀群内助手" href="" target="_blank">SCAM 三国杀群内助手</a></span>
+            <div class="ms-5 d-flex flex-row">
+                <button class="btn btn-success ms-2 px-4" ng-click="export()">添加</button>
+                <button class="btn btn-primary ms-2 px-4" ng-click="addRule()">分享</button>
+                <button class="file btn btn-danger ms-2 px-3">+<input type="file" id="jsonFile"/></div>
+                <button class="btn btn-info ms-2 px-3" ng-click="addRule()">导出</button>
+            </div>
         </div>
     </div>
 </div>

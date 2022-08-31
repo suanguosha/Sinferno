@@ -1,11 +1,11 @@
 {
-    "name": "Sinferno",
+    "name": "SCAM",
     "version": "1.8.1",
-    "description": "Sinferno(Sanguosha is inferno) is a visual aid that helps to ban excluded characters when you play campaigns with your friends. You can customize your own rule set with a simple JSON file. This project is inspired by Reres.",
+    "description": "SCAM(Sanguosha Campaign MAnager a.k.a Sanguosha's Cash grAb Machine) is a visual aid tool for Sanguosha. It helps to block excluded characters on ban-pick menu. You can customize your own rule set with a simple JSON file. This project is inspired by Reres.",
     "manifest_version": 2,
     "browser_action": {
         "default_icon": "icon.png",
-        "default_title": "Sinferno",
+        "default_title": "SCAM",
         "default_popup": "popup.html"
     },
     "options_page": "options.html",
