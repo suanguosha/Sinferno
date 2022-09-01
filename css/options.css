@@ -38,9 +38,7 @@ tr td {
   position: relative;
 }
 tr td div {
-  width: 400px;
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
   word-break: break-all;
 }
@@ -55,9 +53,9 @@ tr input {
   padding-top: 10px;
   position: relative;
 }
-.editBox .close {
+.editBox .btn-close {
   position: absolute;
-  top: 2px;
+  top: 10px;
   right: 2px;
   z-index: 1;
 }

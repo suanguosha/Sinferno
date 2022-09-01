@@ -1,58 +1,55 @@
 'use strict';
 var sgs = angular.module('sgs', []);
-var groupBy = function (collects, name) {
-    var ret = {}, key;
-    collects.forEach(function(elem) {
-        var key = elem[name];
-        ret[key] = ret[key] || [];
-        ret[key].push(elem);
-    });
-    return ret;
-}
 
+var initiateRules = function(rules) {
+    if (rules) return rules;
+    return [{
+        url: 'https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json', // 规则地址
+        title: '酸果杀群内规则', // 规则标题
+        comment: "每晚7-10点开整, 群号557948691", // 规则备注
+        checked: true
+    }]
+}
 sgs.controller('mapListCtrl', function($scope) {
     var bg = chrome.extension.getBackgroundPage();
 
     //保存规则数据到localStorage
     function saveData() {
-        $scope.rules = groupBy($scope.maps, 'group');
-        bg.localStorage.SGSMap = angular.toJson($scope.maps);
+        bg.localStorage.SGSRules = angular.toJson($scope.rules);
     }
 
     //当前编辑的规则
     $scope.curRule = {
-        req: '.*test\\.com',
-        res: 'http://cssha.com',
+        url: 'https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json', // 规则地址
+        title: '酸果杀群内规则', // 规则标题
+        comment: "每晚7-10点开整, 群号557948691", // 规则备注
         checked: true
     }
+    
+    // 规则合集
+    $scope.rules = initiateRules(bg.localStorage.SGSRules);
 
-    $scope.maps = bg.SGSMap;
-    $scope.rules = groupBy(bg.SGSMap, 'group');
-
+    /**
+     * 规则编辑
+     */
     //编辑框显示状态
     $scope.editDisplay = 'none';
 
-    //编辑框保存按钮文本
-    $scope.editText = '添加';
-
-    //输入错误时候的警告
-    $scope.inputError = '';
+    //编辑框保存按钮文本 添加/编辑 添加则新增规则 编辑则修改规则
+    $scope.editMode = '添加';
 
     //隐藏编辑框
     $scope.hideEditBox = function () {
         $scope.editDisplay = 'none';
     }
 
+    //输入错误时候的警告
+    $scope.inputError = '';
+
     //验证输入合法性
     $scope.verify = function () {
-        if (!$scope.curRule.req) {
-            $scope.inputError = '正则规则不能为空';
-            return false;
-        }
-        try {
-            new RegExp($scope.curRule.req);
-        } catch (e){
-            $scope.inputError = '正则规则格式错误';
+        if (!$scope.curRule.url) {
+            $scope.inputError = '请输入订阅规则！';
             return false;
         }
         $scope.inputError = '';
@@ -60,32 +57,41 @@ sgs.controller('mapListCtrl', function($scope) {
     }
 
     // 点击添加按钮
-    $scope.addRule = function () {
+    $scope.importRules = function () {
         if ($scope.editDisplay === 'none') {
             $scope.curRule = {
-                req: '.*test\\.com',
-                res: 'http://cssha.com',
-                checked: true
+                url: 'https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json', // 规则地址
+                title: "酸果杀群内规则", // 规则标题
+                comment: "每晚7-10点开整, 群号557948691" // 规则备注
             };
-            $scope.editText = '添加';
+            $scope.editMode = '添加';
             $scope.editDisplay = 'block';
         } else {
-            $scope.editText === '添加' && ($scope.editDisplay = 'none');
+            $scope.editMode === '添加' && ($scope.editDisplay = 'none');
         }
     };
+
+    // 切换当前生效规则 一次只能开启一个
+    $scope.changeRules = function (rule) {
+        for (var i = 0, len = $scope.rules.length; i< len; i++) {
+            if ($scope.rules[i] !== rule) {
+                $scope.rules[i].checked = false;
+            }
+        }
+    }
 
     //点击编辑按钮
     $scope.edit = function (rule) {
         $scope.curRule = rule;
-        $scope.editText = '编辑';
+        $scope.editMode = '编辑';
         $scope.editDisplay = 'block';
     }
 
     //编辑后保存
     $scope.saveRule = function () {
         if ( $scope.verify() ) {
-            if ($scope.editText === '添加') {
-                $scope.maps.push($scope.curRule);
+            if ($scope.editMode === '添加') {
+                $scope.rules.push($scope.curRule);
             } else {
 
             }
@@ -95,16 +101,28 @@ sgs.controller('mapListCtrl', function($scope) {
     };
 
     //删除规则
-    $scope.removeUrl = function (rule) {
-        for (var i = 0, len = $scope.maps.length; i< len; i++) {
-            if ($scope.maps[i] === rule) {
-                $scope.maps.splice(i, 1);
+    $scope.removeRules = function (rule) {
+        for (var i = 0, len = $scope.rules.length; i< len; i++) {
+            if ($scope.rules[i] === rule) {
+                $scope.rules.splice(i, 1);
             }
         }
         saveData();
     }
 
-    //导出
+    // 导出
+    $scope.exportRules = function (rule) {
+        navigator.clipboard.write(data).then(
+            () => {
+            /* success */
+            },
+            () => {
+            /* failure */
+            }
+        );
+    };
+
+    // TODO 本地导出WIP
     $scope.export = function () {
         function saveAs(blob, filename) {
             var type = blob.type;
@@ -126,29 +144,29 @@ sgs.controller('mapListCtrl', function($scope) {
         }
 
         var URL = URL || webkitURL || window;
-        var bb = new Blob([JSON.stringify($scope.maps, null, '\t')], {type: 'text/json'});
+        var bb = new Blob([JSON.stringify($scope.rules, null, '\t')], {type: 'text/json'});
         saveAs(bb, 'sgsRules.json');
     }
 
-    //导入
-    document.getElementById('jsonFile').onchange = function () {
-        var resultFile = this.files[0];
-        if (resultFile) {
-            var reader = new FileReader();
-            reader.readAsText(resultFile);
-            reader.onload = function (e) {
-                try {
-                    var data = JSON.parse(this.result);
-                    $scope.maps.length = 0;
-                    for (var i = 0, len = data.length; i < len; i++) {
-                        $scope.maps.push(data[i]);
-                    }
-                    saveData();
-                    location.reload();
-                } catch (e) {
-                    alert("导入失败，请检查文件格式是否正确");
-                }
-            };
-        }
-    }
+    // TODO 本地导入WIP
+    // document.getElementById('jsonFile').onchange = function () {
+    //     var resultFile = this.files[0];
+    //     if (resultFile) {
+    //         var reader = new FileReader();
+    //         reader.readAsText(resultFile);
+    //         reader.onload = function (e) {
+    //             try {
+    //                 var data = JSON.parse(this.result);
+    //                 $scope.rules.length = 0;
+    //                 for (var i = 0, len = data.length; i < len; i++) {
+    //                     $scope.rules.push(data[i]);
+    //                 }
+    //                 saveData();
+    //                 location.reload();
+    //             } catch (e) {
+    //                 alert("导入失败，请检查文件格式是否正确");
+    //             }
+    //         };
+    //     }
+    // }
 });
