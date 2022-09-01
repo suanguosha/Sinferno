@@ -1,0 +1,87 @@
+[
+  {
+    "title": "神将",
+    "rows": [
+      { "name": "神关羽", "key": "001", "checked": false },
+      { "name": "神吕蒙", "key": "002", "checked": false },
+      { "name": "神周瑜", "key": "003", "checked": false },
+      { "name": "神诸葛亮", "key": "004", "checked": false },
+      { "name": "神曹操", "key": "005", "checked": false },
+      { "name": "神吕布", "key": "006", "checked": false },
+      { "name": "神赵云", "key": "007", "checked": false },
+      { "name": "神司马懿", "key": "008", "checked": false },
+      { "name": "神刘备", "key": "009", "checked": false },
+      { "name": "神陆逊", "key": "010", "checked": false },
+      { "name": "神张辽", "key": "011", "checked": false },
+      { "name": "神甘宁", "key": "012", "checked": false }
+    ]
+  },
+  {
+    "title": "祈福",
+    "rows": [
+      { "name": "神关羽", "key": "001", "checked": false },
+      { "name": "神吕蒙", "key": "002", "checked": false },
+      { "name": "神周瑜", "key": "003", "checked": false },
+      { "name": "神诸葛亮", "key": "004", "checked": false },
+      { "name": "神曹操", "key": "005", "checked": false },
+      { "name": "神吕布", "key": "006", "checked": false },
+      { "name": "神赵云", "key": "007", "checked": false },
+      { "name": "神司马懿", "key": "008", "checked": false },
+      { "name": "神刘备", "key": "009", "checked": false },
+      { "name": "神陆逊", "key": "010", "checked": false },
+      { "name": "神张辽", "key": "011", "checked": false },
+      { "name": "神甘宁", "key": "012", "checked": false }
+    ]
+  },
+  {
+    "title": "小祈福",
+    "rows": [
+      { "name": "神关羽", "key": "001", "checked": false },
+      { "name": "神吕蒙", "key": "002", "checked": false },
+      { "name": "神周瑜", "key": "003", "checked": false },
+      { "name": "神诸葛亮", "key": "004", "checked": false },
+      { "name": "神曹操", "key": "005", "checked": false },
+      { "name": "神吕布", "key": "006", "checked": false },
+      { "name": "神赵云", "key": "007", "checked": false },
+      { "name": "神司马懿", "key": "008", "checked": false },
+      { "name": "神刘备", "key": "009", "checked": false },
+      { "name": "神陆逊", "key": "010", "checked": false },
+      { "name": "神张辽", "key": "011", "checked": false },
+      { "name": "神甘宁", "key": "012", "checked": false }
+    ]
+  },
+  {
+    "title": "限定",
+    "rows": [
+      { "name": "神关羽", "key": "001", "checked": false },
+      { "name": "神吕蒙", "key": "002", "checked": false },
+      { "name": "神周瑜", "key": "003", "checked": false },
+      { "name": "神诸葛亮", "key": "004", "checked": false },
+      { "name": "神曹操", "key": "005", "checked": false },
+      { "name": "神吕布", "key": "006", "checked": false },
+      { "name": "神赵云", "key": "007", "checked": false },
+      { "name": "神司马懿", "key": "008", "checked": false },
+      { "name": "神刘备", "key": "009", "checked": false },
+      { "name": "神陆逊", "key": "010", "checked": false },
+      { "name": "神张辽", "key": "011", "checked": false },
+      { "name": "神甘宁", "key": "012", "checked": false }
+    ]
+  },
+  {
+    "title": "活动",
+    "rows": [
+      { "name": "神关羽", "key": "001", "checked": false },
+      { "name": "神吕蒙", "key": "002", "checked": false },
+      { "name": "神周瑜", "key": "003", "checked": false },
+      { "name": "神诸葛亮", "key": "004", "checked": false },
+      { "name": "神曹操", "key": "005", "checked": false },
+      { "name": "神吕布", "key": "006", "checked": false },
+      { "name": "神赵云", "key": "007", "checked": false },
+      { "name": "神司马懿", "key": "008", "checked": false },
+      { "name": "神刘备", "key": "009", "checked": false },
+      { "name": "神陆逊", "key": "010", "checked": false },
+      { "name": "神张辽", "key": "011", "checked": false },
+      { "name": "神甘宁", "key": "012", "checked": false }
+    ]
+  }
+]
