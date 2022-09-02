@@ -42,6 +42,7 @@ sgs.controller("mapListCtrl", function ($scope) {
    */
   // 添加订阅
   $scope.importRules = function (curRule) {
+    $scope.inputError = ""; // 清空错误信息
     if ($scope.editDisplay === "none") {
       if (!curRule) {
         $scope.curRule = {
