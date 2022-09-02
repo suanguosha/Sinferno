@@ -1,19 +1,23 @@
+'use strict';
+
 var SGSMap = [];
 var typeMap = {
-    "txt"   : "text/plain",
-    "html"  : "text/html",
-    "css"   : "text/css",
-    "js"    : "text/javascript",
-    "json"  : "text/json",
-    "xml"   : "text/xml",
-    "jpg"   : "image/jpeg",
-    "gif"   : "image/gif",
-    "png"   : "image/png",
-    "webp"  : "image/webp"
-}
+  txt: "text/plain",
+  html: "text/html",
+  css: "text/css",
+  js: "text/javascript",
+  json: "text/json",
+  xml: "text/xml",
+  jpg: "image/jpeg",
+  gif: "image/gif",
+  png: "image/png",
+  webp: "image/webp",
+};
 
 function getLocalStorage() {
-    SGSMap = window.localStorage.SGSMap ? JSON.parse(window.localStorage.SGSMap) : SGSMap;
+  SGSMap = window.localStorage.SGSMap
+    ? JSON.parse(window.localStorage.SGSMap)
+    : SGSMap;
 }
 
 // 0902 先不考虑本地file替换
@@ -38,39 +42,47 @@ function getLocalStorage() {
 // }
 
 // This is where all magic happen
-chrome.webRequest.onBeforeRequest.addListener(function (details) {
-        var url = details.url;
-        // FIXME 
-        let url = "http://zssanguo.suanguosha.com/notebook//images/avatar.png?v=1656926835332"
+chrome.webRequest.onBeforeRequest.addListener(
+  (details) => {
+    var url = details.url;
+    console.warn(url);
+    for (var i = 0, len = SGSMap.length; i < len; i++) {
+      var reg = new RegExp(SGSMap[i].req, "gi");
+      // FIXME
+      reg = new RegExp(
+        "https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png",
+        "gi"
+      );
 
-        for (var i = 0, len = SGSMap.length; i < len; i++) {
-            var reg = new RegExp(SGSMap[i].req, 'gi');
-            // FIXME 
-            var reg = new RegExp("http://zssanguo.suanguosha.com/notebook//images/avatar.png", 'gi');
-            
-            if (SGSMap[i].checked && typeof SGSMap[i].res === 'string' && reg.test(url)) {
-                if (!/^file:\/\//.test(SGSMap[i].res)) {
-                    do {
-                        url = url.replace(reg, SGSMap[i].res);
-                        // FIXME
-                        let res = "http://tradetest2.xqfunds.com/tougu/images/xq-logo.jpg"
-                        url = url.replace(reg, res);
-
-                    } while (reg.test(url))
-                } else {
-                    // 0902 先不考虑本地file替换
-                    // do {
-                    //     url = getLocalFileUrl(url.replace(reg, SGSMap[i].res));
-                    // } while (reg.test(url))
-                }
-            }
+      // FIXME if CONDITION
+      if (
+        true ||
+        (       SGSMap[i].checked &&
+          typeof SGSMap[i].res === "string" &&
+          reg.test(url))
+      ) {
+        if (!/^file:\/\//.test(SGSMap[i].res)) {
+            console.error("start replacement", url);
+          do {
+            url = url.replace(reg, SGSMap[i].res);
+            // FIXME
+            let res = "https://tradetest2.xqfunds.com/tougu/images/xq-logo.jpg";
+            url = url.replace(reg, res);
+            console.error("resource replaced!", url);
+          } while (reg.test(url));
+        } else {
+          // 0902 先不考虑本地file替换
+          // do {
+          //     url = getLocalFileUrl(url.replace(reg, SGSMap[i].res));
+          // } while (reg.test(url))
         }
-        return url === details.url ? {} : { redirectUrl: url };
-    },
-    {urls: ["<all_urls>"]},
-    ["blocking"]
+      }
+    }
+    return url === details.url ? {} : { redirectUrl: url };
+  },
+  { urls: ["<all_urls>"], types: ["image"] },
+  ["blocking"]
 );
 
 getLocalStorage();
-window.addEventListener('storage', getLocalStorage, false);
-
+window.addEventListener("storage", getLocalStorage, false);
