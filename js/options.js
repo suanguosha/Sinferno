@@ -17,6 +17,12 @@ var initiateRules = function (rules) {
 // chrome实例
 var bg = chrome.extension.getBackgroundPage();
 
+var defaultRule = {
+  url: "https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json", // 规则地址
+  title: "酸果杀群内规则", // 规则标题
+  comment: "每晚7-10点开整, 群号557948691" // 规则备注
+}
+
 sgs.controller("mapListCtrl", function ($scope) {
 
   //保存规则数据到localStorage
@@ -31,9 +37,7 @@ sgs.controller("mapListCtrl", function ($scope) {
   $scope.rules = initiateRules(bg.localStorage.SGSRules);
   //当前订阅规则
   $scope.curRule = {
-    url: "https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json", // 规则地址
-    title: "酸果杀群内规则", // 规则标题
-    comment: "每晚7-10点开整, 群号557948691", // 规则备注
+    ...defaultRule,
     checked: true,
   };
 
@@ -45,11 +49,7 @@ sgs.controller("mapListCtrl", function ($scope) {
     $scope.inputError = ""; // 清空错误信息
     if ($scope.editDisplay === "none") {
       if (!curRule) {
-        $scope.curRule = {
-          url: "https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json", // 规则地址
-          title: "酸果杀群内规则", // 规则标题
-          comment: "每晚7-10点开整, 群号557948691", // 规则备注
-        };
+        $scope.curRule = defaultRule;
       }
       $scope.editMode = "添加";
       $scope.editDisplay = "block";
