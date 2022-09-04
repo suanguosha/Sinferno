@@ -157,7 +157,10 @@ sgs.controller("mapListCtrl", function ($scope) {
   };
   // 规则集合
   $scope.fetchRuleSet = function () {
-    fetch("../ruleSet.json").then(res => res.json()).then(response => {
+    fetch("../ruleSet.json").then(res => {
+      console.error(res);
+      return res.json()
+    }).then(response => {
       $scope.$applyAsync(function () {
         $scope.ruleSet = response;
       });
