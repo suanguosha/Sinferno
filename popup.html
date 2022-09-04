@@ -26,18 +26,18 @@
           ng-click="updateRules()"
         >
           <span
-            ng-show="updateStatus.loading"
+            ng-if="updateStatus.loading"
             class="spinner-border spinner-border-sm"
             role="status"
           ></span>
           <span
-            ng-show="updateStatus.showResult && updateStatus.success"
+            ng-if="updateStatus.showResult && updateStatus.success"
           >√ 更新成功!</span>
           <span
-            ng-show="updateStatus.showResult && !updateStatus.success"
+            ng-if="updateStatus.showResult && !updateStatus.success"
           >X 更新失败</span>
           <span
-            ng-show="!updateStatus.showResult"
+            ng-if="!updateStatus.showResult"
           >更新规则</span>
         </button>
 

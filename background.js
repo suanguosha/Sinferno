@@ -45,7 +45,22 @@ function getLocalStorage() {
 chrome.webRequest.onBeforeRequest.addListener(
   (details) => {
     var url = details.url;
+
+    // TODO simple test
+    /**
+     * 图片处理
+     * 动态图片 https://web.sanguosha.com/10/pc/res/assets/runtime/general/big/dynamic/XXXXXX/daiji2.png
+     * 静态图片 https://web.sanguosha.com/10/pc/res/assets/runtime/general/seat/static/XXXXX.png
+     */
     console.warn(url);
+    if (url.indexOf("https://web.sanguosha.com/10/pc/res/assets/runtime/general/seat/static") > -1) {
+      console.error("更新静态座位图片", url);
+      url = "https://avos-cloud-gwibfiplqh86.s3.amazonaws.com/5Go3rpXLS1ygfFGrue9VTKdfBnA4r7f6/dabao.png"
+    }
+    if (url.indexOf("daiji2.png") > -1) {
+      console.error("更新动态座位图片", url);
+      url = "https://avos-cloud-gwibfiplqh86.s3.amazonaws.com/XQ0v3b4ElnH1JANxGESM3Hy3zXPOR64c/dabao_daiji.png"
+    }
     for (var i = 0, len = SGSMap.length; i < len; i++) {
       var reg = new RegExp(SGSMap[i].req, "gi");
       // FIXME
@@ -80,7 +95,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     }
     return url === details.url ? {} : { redirectUrl: url };
   },
-  { urls: ["<all_urls>"], types: ["image"] },
+  { urls: ["<all_urls>"], types: ["image", "xmlhttprequest"] },
   ["blocking"]
 );
 
