@@ -24,7 +24,7 @@
             ></span
           >
           <div class="ms-5 d-flex flex-row">
-            <button class="btn btn-success ms-2 px-4" ng-click="importRules()">
+            <button class="btn btn-success ms-2 px-4" ng-click="importSubscription()">
               添加
             </button>
             <button class="btn btn-success ms-2 px-4" ng-click="openCreator()">
@@ -43,24 +43,18 @@
     <div class="mx-4">
       <!-- 生成禁将规则 -->
       <div style="display:{{createDisplay}};" class="mx-4">
-        <label class="mt-4" for="req">选择禁止的武将</label>
-        <table class="col-12 table table-hover table-bordered">
-          <tbody>
-            <tr ng-repeat="group in ruleSet track by $index">
-              <td>{{ group.title }}</td>
-              <td
-                class="checkbox"
-                ng-repeat="chracter in group.rows track by $index"
-              >
-                <input
-                  type="checkbox"
-                  ng-model="chracter.checked"
-                />&nbsp;{{chracter.name}}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <button class="btn-block btn btn-primary" ng-click="createRules()">
+        <label class="mt-4">选择禁止的武将</label>
+        <div class="d-flex flex-wrap mt-3 border-bottom border-success" ng-repeat="group in ruleSet track by $index">
+          <!-- 全选武将 -->
+          <!-- <input class="form-check-input" type="checkbox" id="$index" ng-change="groupSelect()">
+          <label class="me-1">{{ group.title }}:&nbsp;&nbsp;</label> -->
+          <div class="form-check form-check-inline" ng-repeat="character in group.rows track by $index">
+            <!-- 单选武将 -->
+            <input class="form-check-input" type="checkbox" id="character.key" ng-model="character.checked">
+            <label class="form-check-label" for="character.key">{{character.name}}&nbsp;&nbsp;</label>
+          </div>
+        </div>
+        <button class="mt-4 btn-block btn btn-primary" ng-click="createRules()">
           生成
         </button>
       </div>
@@ -79,7 +73,7 @@
             type="text"
             class="form-control"
             id="req"
-            ng-model="curRule.url"
+            ng-model="curSubscription.url"
           />
         </div>
         <div class="mt-2">
@@ -88,7 +82,7 @@
             type="text"
             class="form-control"
             id="res"
-            ng-model="curRule.title"
+            ng-model="curSubscription.title"
           />
         </div>
         <div class="mt-2">
@@ -97,10 +91,10 @@
             type="text"
             class="form-control"
             id="res"
-            ng-model="curRule.comment"
+            ng-model="curSubscription.comment"
           />
         </div>
-        <button class="mt-2 btn-block btn btn-primary" ng-click="saveRule()">
+        <button class="mt-2 btn-block btn btn-primary" ng-click="saveSubscription()">
           保存
         </button>
       </div>
@@ -114,27 +108,27 @@
           <td>操作</td>
         </thead>
         <tbody>
-          <tr ng-repeat="rule in rules track by $index">
+          <tr ng-repeat="sub in subscriptions track by $index">
             <td class="checkbox">
               <input
                 type="checkbox"
-                ng-model="rule.checked"
-                ng-click="changeRules(rule)"
+                ng-model="sub.checked"
+                ng-click="changeSubscription(sub)"
               />
             </td>
-            <td><div title="{{rule.title}}">{{rule.title}}</div></td>
-            <td><div title="{{rule.comment}}">{{rule.comment}}</div></td>
-            <td><div title="{{rule.url}}">{{rule.url}}</div></td>
+            <td><div title="{{sub.title}}">{{sub.title}}</div></td>
+            <td><div title="{{sub.comment}}">{{sub.comment}}</div></td>
+            <td><div title="{{sub.url}}">{{sub.url}}</div></td>
             <td>
               <button
-                ng-click="edit(rule)"
+                ng-click="editSubscription(sub)"
                 type="button"
                 class="btn btn-primary btn-sm edit"
               >
                 编辑
               </button>
               <button
-                ng-click="removeRules(rule)"
+                ng-click="removeSubscription(sub)"
                 type="button"
                 class="btn btn-default btn-sm remove"
               >
