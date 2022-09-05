@@ -20,8 +20,8 @@ var bg = chrome.extension.getBackgroundPage();
 var defaultSubscription = {
   url: "https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json", // 规则地址
   title: "酸果杀群内规则", // 规则标题
-  comment: "每晚7-10点开整, 群号557948691" // 规则备注
-}
+  comment: "每晚7-10点开整, 群号557948691", // 规则备注
+};
 
 // controller开始
 sgs.controller("mapListCtrl", function ($scope) {
@@ -35,7 +35,7 @@ sgs.controller("mapListCtrl", function ($scope) {
    */
   /**
    * 添加订阅
-   * @param mode import: 导入 create 生成 
+   * @param mode import: 导入 create 生成
    */
   $scope.importSubscription = function (curSubscription) {
     $scope.inputError = ""; // 清空错误信息
@@ -50,7 +50,7 @@ sgs.controller("mapListCtrl", function ($scope) {
     }
   };
   // 生成规则
-  $scope.openCreator = function() {
+  $scope.openCreator = function () {
     if ($scope.createDisplay === "none") {
       $scope.createDisplay = "block";
     } else {
@@ -58,7 +58,7 @@ sgs.controller("mapListCtrl", function ($scope) {
     }
   };
   // 分享规则
-  $scope.exportRules = function() {
+  $scope.exportRules = function () {
     // 获取当前选中订阅规则
     let curRuleIndex = -1;
     for (var i = 0, len = $scope.subscriptions.length; i < len; i++) {
@@ -70,11 +70,11 @@ sgs.controller("mapListCtrl", function ($scope) {
       alert("请选中需要分享的订阅规则！");
       return;
     }
-    navigator.clipboard.writeText($scope.subscriptions[curRuleIndex].url).then(
-      () => {
+    navigator.clipboard
+      .writeText($scope.subscriptions[curRuleIndex].url)
+      .then(() => {
         alert("已将订阅规则复制到剪贴板！");
-      }
-    );
+      });
   };
 
   /**
@@ -119,7 +119,7 @@ sgs.controller("mapListCtrl", function ($scope) {
       return true;
     };
     // 生成
-    if ($scope.editMode == '生成') {
+    if ($scope.editMode == "生成") {
       $scope.uploadRule();
       return;
     }
@@ -156,40 +156,51 @@ sgs.controller("mapListCtrl", function ($scope) {
   };
   // 上传规则
   $scope.uploadRule = () => {
-    AV.init({appId: "x7VNtxQTbE7QxMYtAodAPV9U-MdYXbMMI", appKey: "y539izMP0ea2m7vK7jPdbWrS"});
-    AV.User.logOut();
-    AV.User.logIn("admin", "admin").then(function(){
-      let sgsRules = {
-        title: $scope.curSubscription.title,
-        comment: $scope.curSubscription.comment,
-        ruleSet: $scope.ruleSet,
-      }
-      const file = new AV.File(`${$scope.curSubscription.title}.json`, sgsRules, 'application/json');
-      file.save({ keepFileName: true }).then((file) => {
-        console.error(file.url);
-        $scope.inputError = "新规则已生成" + file.url + "请保存订阅规则";
-      }, () => {
-        alert("上传失败, 请联系作者!");
-      });
-    }, () => {
-      alert("服务器连接不上, 请联系作者!");
+    let token = "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";
+
+    let sgsRules = {
+      title: $scope.curSubscription.title,
+      comment: $scope.curSubscription.comment,
+      ruleSet: $scope.ruleSet,
+    };
+    let fileName = `${$scope.curSubscription.title + new Date().getTime()}.json`
+    fetch('https://api.github.com/repos/ME70N/sgsRules/contents/' + fileName, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        "message": "new rules on the way!",
+        "content": btoa(unescape(encodeURIComponent(JSON.stringify(sgsRules))))
+      })
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Success:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
     });
-  }
+  };
+
   // 获取最新规则集合
   $scope.fetchRuleSet = function () {
-    fetch("../ruleSet.json").then(res => res.json()).then(response => {
-      $scope.$applyAsync(function () {
-        $scope.ruleSet = response;
+    fetch("../ruleSet.json")
+      .then((res) => res.json())
+      .then((response) => {
+        $scope.$applyAsync(function () {
+          $scope.ruleSet = response;
+        });
       });
-    })
   };
   $scope.fetchRuleSet();
   // 勾选某分类的武将
   $scope.toggleRuleGroup = function (group, index) {
     for (var i = 0, len = $scope.ruleSet[index].rows.length; i < len; i++) {
-      $scope.ruleSet[index].rows[i].checked = group.checked
+      $scope.ruleSet[index].rows[i].checked = group.checked;
     }
-  }
+  };
 
   // TODO 本地导出WIP
   // $scope.export = function () {
