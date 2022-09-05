@@ -23,22 +23,11 @@ var defaultSubscription = {
   comment: "每晚7-10点开整, 群号557948691" // 规则备注
 }
 
+// controller开始
 sgs.controller("mapListCtrl", function ($scope) {
-
   //保存订阅到localStorage
   var saveData = function () {
     bg.localStorage.SGSSubs = angular.toJson($scope.subscriptions);
-  };
-
-  /**
-   * 订阅规则
-  */
-  // 订阅合集
-  $scope.subscriptions = initiateSubscription(bg.localStorage.SGSSubs);
-  //当前订阅
-  $scope.curSubscription = {
-    ...defaultSubscription,
-    checked: true,
   };
 
   /**
@@ -88,10 +77,17 @@ sgs.controller("mapListCtrl", function ($scope) {
   /**
    * 订阅表单
    */
+  // 订阅合集
+  $scope.subscriptions = initiateSubscription(bg.localStorage.SGSSubs);
+  // 当前订阅
+  $scope.curSubscription = {
+    ...defaultSubscription,
+    checked: true,
+  };
   $scope.editDisplay = "none"; //订阅编辑框显示状态
   $scope.editMode = "添加"; //订阅编辑框保存按钮文本 添加/编辑 添加则新增规则 编辑则修改规则
   $scope.inputError = ""; //输入错误时候的警告
-  //　关闭编辑框
+  // 关闭订阅表单
   $scope.hideEditBox = function () {
     $scope.editDisplay = "none";
   };
@@ -144,10 +140,6 @@ sgs.controller("mapListCtrl", function ($scope) {
    * 规则表单
    */
   $scope.createDisplay = "none"; //订阅编辑框显示状态
-  //　关闭规则表单
-  $scope.hideCreateBox = function () {
-    $scope.createDisplay = "none";
-  };
   // 生成规则
   $scope.createRules = function () {
     console.error(JSON.stringify($scope.ruleSet));
@@ -157,7 +149,7 @@ sgs.controller("mapListCtrl", function ($scope) {
     };
     $scope.importSubscription($scope.curSubscription);
   };
-  // 规则集合
+  // 获取最新规则集合
   $scope.fetchRuleSet = function () {
     fetch("../ruleSet.json").then(res => res.json()).then(response => {
       $scope.$applyAsync(function () {
@@ -166,7 +158,12 @@ sgs.controller("mapListCtrl", function ($scope) {
     })
   };
   $scope.fetchRuleSet();
-
+  // 勾选某分类的武将
+  $scope.toggleRuleGroup = function (group, index) {
+    for (var i = 0, len = $scope.ruleSet[index].rows.length; i < len; i++) {
+      $scope.ruleSet[index].rows[i].checked = group.checked
+    }
+  }
 
   // TODO 本地导出WIP
   // $scope.export = function () {

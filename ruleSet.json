@@ -1,6 +1,7 @@
 [
   {
     "title": "荟萃",
+    "checked": false,
     "rows": [
       { "name": "张璇", "key": "001", "checked": false },
       { "name": "张瑶", "key": "002", "checked": false },
@@ -16,12 +17,14 @@
   },
   {
     "title": "列传",
+    "checked": false,
     "rows": [
       { "name": "许勋", "key": "101", "checked": false }
     ]
   },
   {
     "title": "活动",
+    "checked": false,
     "rows": [
       { "name": "庞德公", "key": "201", "checked": false },
       { "name": "南华仙人", "key": "202", "checked": false },
@@ -30,6 +33,7 @@
   },
   {
     "title": "限定",
+    "checked": false,
     "rows": [
       { "name": "关索", "key": "301", "checked": false },
       { "name": "赵襄", "key": "302", "checked": false },
@@ -64,6 +68,7 @@
   },
   {
     "title": "平民",
+    "checked": false,
     "rows": [
       { "name": "刘焉", "key": "401", "checked": false },
       { "name": "凌统", "key": "402", "checked": false },

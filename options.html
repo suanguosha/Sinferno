@@ -46,8 +46,8 @@
         <label class="mt-4">选择禁止的武将</label>
         <div class="d-flex flex-wrap mt-3 border-bottom border-success" ng-repeat="group in ruleSet track by $index">
           <!-- 全选武将 -->
-          <!-- <input class="form-check-input" type="checkbox" id="$index" ng-change="groupSelect()">
-          <label class="me-1">{{ group.title }}:&nbsp;&nbsp;</label> -->
+          <input class="form-check-input" type="checkbox" id="$index" ng-model="group.checked" ng-change="toggleRuleGroup(group, $index)">
+          <label class="me-1">{{ group.title }}:&nbsp;&nbsp;</label>
           <div class="form-check form-check-inline" ng-repeat="character in group.rows track by $index">
             <!-- 单选武将 -->
             <input class="form-check-input" type="checkbox" id="character.key" ng-model="character.checked">
