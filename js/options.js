@@ -33,7 +33,10 @@ sgs.controller("mapListCtrl", function ($scope) {
   /**
    * 导航菜单
    */
-  // 添加订阅
+  /**
+   * 添加订阅
+   * @param mode import: 导入 create 生成 
+   */
   $scope.importSubscription = function (curSubscription) {
     $scope.inputError = ""; // 清空错误信息
     if ($scope.editDisplay === "none") {
@@ -115,10 +118,15 @@ sgs.controller("mapListCtrl", function ($scope) {
       $scope.inputError = "";
       return true;
     };
+    // 生成
+    if ($scope.editMode == '生成') {
+      $scope.uploadRule();
+      return;
+    }
+    // 添加 编辑
     if (verify()) {
       if ($scope.editMode === "添加") {
         $scope.subscriptions.push($scope.curSubscription);
-      } else {
       }
       saveData();
       $scope.editDisplay = "none";
@@ -140,15 +148,33 @@ sgs.controller("mapListCtrl", function ($scope) {
    * 规则表单
    */
   $scope.createDisplay = "none"; //订阅编辑框显示状态
+  $scope.createStatus = "none"; //订阅编辑框显示状态
   // 生成规则
-  $scope.createRules = function () {
-    console.error(JSON.stringify($scope.ruleSet));
-    $scope.inputError = "新规则已生成" + JSON.stringify($scope.ruleSet) + "请保存订阅规则";
-    $scope.curSubscription = {
-      url: "https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json?timestamp=" + new Date().getTime(),
-    };
-    $scope.importSubscription($scope.curSubscription);
+  $scope.createRule = function () {
+    $scope.editMode = "生成";
+    $scope.editDisplay = "block";
   };
+  // 上传规则
+  $scope.uploadRule = () => {
+    AV.init({appId: "x7VNtxQTbE7QxMYtAodAPV9U-MdYXbMMI", appKey: "y539izMP0ea2m7vK7jPdbWrS"});
+    AV.User.logOut();
+    AV.User.logIn("admin", "admin").then(function(){
+      let sgsRules = {
+        title: $scope.curSubscription.title,
+        comment: $scope.curSubscription.comment,
+        ruleSet: $scope.ruleSet,
+      }
+      const file = new AV.File(`${$scope.curSubscription.title}.json`, sgsRules, 'application/json');
+      file.save({ keepFileName: true }).then((file) => {
+        console.error(file.url);
+        $scope.inputError = "新规则已生成" + file.url + "请保存订阅规则";
+      }, () => {
+        alert("上传失败, 请联系作者!");
+      });
+    }, () => {
+      alert("服务器连接不上, 请联系作者!");
+    });
+  }
   // 获取最新规则集合
   $scope.fetchRuleSet = function () {
     fetch("../ruleSet.json").then(res => res.json()).then(response => {

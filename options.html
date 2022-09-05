@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/options.css" />
     <script type="text/javascript" src="js/angular.js"></script>
     <script type="text/javascript" src="js/options.js"></script>
+    <script type="text/javascript" src="js/av-min.js"></script>
   </head>
   <body ng-controller="mapListCtrl" class="d-flex flex-column justify-center">
     <!-- 导航栏 -->
@@ -28,6 +29,11 @@
               添加
             </button>
             <button class="btn btn-success ms-2 px-4" ng-click="openCreator()">
+              <span
+                ng-if="updateStatus.loading"
+                class="spinner-border spinner-border-sm"
+                role="status"
+              ></span>
               生成
             </button>
             <button class="btn btn-primary ms-2 px-4" ng-click="exportRules()">
@@ -54,12 +60,12 @@
             <label class="form-check-label" for="character.key">{{character.name}}&nbsp;&nbsp;</label>
           </div>
         </div>
-        <button class="mt-4 btn-block btn btn-primary" ng-click="createRules()">
-          生成
+        <button class="mt-4 btn-block btn btn-primary" ng-click="createRule()">
+          下一步
         </button>
       </div>
 
-      <!-- 添加订阅规则 -->
+      <!-- 导入/编辑/生成订阅规则 -->
       <div style="display:{{editDisplay}};" class="editBox mx-4">
         <button
           type="button"
@@ -69,7 +75,7 @@
         <div class="errorMsg">{{inputError}}</div>
         <div class="mt-4">
           <label for="req">订阅规则</label>
-          <input
+          <input disabled="editMode == '生成'"
             type="text"
             class="form-control"
             id="req"
@@ -95,7 +101,7 @@
           />
         </div>
         <button class="mt-2 btn-block btn btn-primary" ng-click="saveSubscription()">
-          保存
+          {{ editMode }}
         </button>
       </div>
       <!-- 订阅规则列表 -->
