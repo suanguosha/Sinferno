@@ -62,4 +62,5 @@ tr input {
 .errorMsg {
   text-align: center;
   color: red;
+  white-space: pre-wrap;
 }

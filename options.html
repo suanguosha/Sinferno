@@ -29,11 +29,6 @@
               添加
             </button>
             <button class="btn btn-success ms-2 px-4" ng-click="openCreator()">
-              <span
-                ng-if="updateStatus.loading"
-                class="spinner-border spinner-border-sm"
-                role="status"
-              ></span>
               生成
             </button>
             <button class="btn btn-primary ms-2 px-4" ng-click="exportRules()">
@@ -73,35 +68,49 @@
           ng-click="hideEditBox()"
         ></button>
         <div class="errorMsg">{{inputError}}</div>
-        <div class="mt-4">
-          <label for="req">订阅规则</label>
-          <input disabled="editMode == '生成'"
+        <div class="mt-4" ng-if="editMode != '生成'">
+          <label for="sub">订阅规则</label>
+          <input
             type="text"
             class="form-control"
-            id="req"
+            id="sub"
             ng-model="curSubscription.url"
           />
         </div>
         <div class="mt-2">
-          <label for="res">标题:</label>
+          <label for="title">标题:</label>
           <input
             type="text"
             class="form-control"
-            id="res"
+            id="title"
             ng-model="curSubscription.title"
           />
         </div>
         <div class="mt-2">
-          <label for="res">备注:</label>
+          <label for="comment">备注:</label>
           <input
             type="text"
             class="form-control"
-            id="res"
+            id="comment"
             ng-model="curSubscription.comment"
           />
         </div>
+        <div class="mt-2" ng-if="editMode == '生成'">
+          <label for="sha">密钥(更新旧规则请填, 生成新规则不填!):</label>
+          <input
+            type="text"
+            class="form-control"
+            id="sha"
+            ng-model="curSubscription.sha"
+          />
+        </div>
         <button class="mt-2 btn-block btn btn-primary" ng-click="saveSubscription()">
-          {{ editMode }}
+          <span
+            ng-if="createStatus.loading"
+            class="spinner-border spinner-border-sm"
+            role="status"
+          ></span>
+        {{ editMode }}
         </button>
       </div>
       <!-- 订阅规则列表 -->

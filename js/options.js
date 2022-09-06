@@ -4,23 +4,15 @@ var sgs = angular.module("sgs", []);
 // 初始化订阅
 var initiateSubscription = function (subscriptions) {
   if (subscriptions) return angular.fromJson(subscriptions);
-  return [
-    {
-      url: "https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json", // 规则地址
-      title: "酸果杀群内规则", // 规则标题
-      comment: "每晚7-10点开整, 群号557948691", // 规则备注
-      checked: true,
-    },
-  ];
 };
 
 // chrome实例
 var bg = chrome.extension.getBackgroundPage();
 
 var defaultSubscription = {
-  url: "https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json", // 规则地址
-  title: "酸果杀群内规则", // 规则标题
-  comment: "每晚7-10点开整, 群号557948691", // 规则备注
+  url: "", // 规则地址
+  title: "", // 规则标题
+  comment: "", // 规则备注
 };
 
 // controller开始
@@ -31,15 +23,26 @@ sgs.controller("mapListCtrl", function ($scope) {
   };
 
   /**
+   * loading状态
+   */
+  $scope.loadingStatus = false // loading状态
+  $scope.toggleLoading = (status) => {
+    $scope.loadingStatus = status;
+  } // 修改loading状态
+  $scope.updateError = (message) => {
+    $scope.inputError = message;
+  } // 修改网络请求报错
+
+  /**
    * 导航菜单
    */
   /**
    * 添加订阅
-   * @param mode import: 导入 create 生成
    */
   $scope.importSubscription = function (curSubscription) {
     $scope.inputError = ""; // 清空错误信息
-    if ($scope.editDisplay === "none") {
+    $scope.createDisplay = "none"; // 关闭生成规则
+    if ($scope.editDisplay === "none" || $scope.editMode === '生成') {
       if (!curSubscription) {
         $scope.curSubscription = defaultSubscription;
       }
@@ -51,6 +54,8 @@ sgs.controller("mapListCtrl", function ($scope) {
   };
   // 生成规则
   $scope.openCreator = function () {
+    $scope.inputError = ""; // 清空错误信息
+    $scope.editDisplay = "none"; // 关闭添加规则
     if ($scope.createDisplay === "none") {
       $scope.createDisplay = "block";
     } else {
@@ -85,6 +90,7 @@ sgs.controller("mapListCtrl", function ($scope) {
   // 当前订阅
   $scope.curSubscription = {
     ...defaultSubscription,
+    sha: "",
     checked: true,
   };
   $scope.editDisplay = "none"; //订阅编辑框显示状态
@@ -135,7 +141,6 @@ sgs.controller("mapListCtrl", function ($scope) {
   };
   // 删除订阅
   $scope.removeSubscription = function (sub) {
-    console.log($scope.subscriptions);
     for (var i = 0, len = $scope.subscriptions.length; i < len; i++) {
       if ($scope.subscriptions[i] === sub) {
         $scope.subscriptions.splice(i, 1);
@@ -147,8 +152,7 @@ sgs.controller("mapListCtrl", function ($scope) {
   /**
    * 规则表单
    */
-  $scope.createDisplay = "none"; //订阅编辑框显示状态
-  $scope.createStatus = "none"; //订阅编辑框显示状态
+  $scope.createDisplay = "none"; // 订阅编辑框显示状态
   // 生成规则
   $scope.createRule = function () {
     $scope.editMode = "生成";
@@ -156,32 +160,50 @@ sgs.controller("mapListCtrl", function ($scope) {
   };
   // 上传规则
   $scope.uploadRule = () => {
+    $scope.toggleLoading(true);
     let token = "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";
-
     let sgsRules = {
       title: $scope.curSubscription.title,
       comment: $scope.curSubscription.comment,
       ruleSet: $scope.ruleSet,
     };
-    let fileName = `${$scope.curSubscription.title + new Date().getTime()}.json`
+    let fileName = `${$scope.curSubscription.title}.json`;
+    let body = {
+      "message": "上传规则: " + `${$scope.curSubscription.title}`,
+      "content": btoa(unescape(encodeURIComponent(JSON.stringify(sgsRules))))
+    }
+    if ($scope.curSubscription.sha) {
+      body.sha = $scope.curSubscription.sha;
+    }
     fetch('https://api.github.com/repos/ME70N/sgsRules/contents/' + fileName, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        "message": "new rules on the way!",
-        "content": btoa(unescape(encodeURIComponent(JSON.stringify(sgsRules))))
-      })
+      body: JSON.stringify(body)
     })
-    .then((response) => response.json())
+    .then((res) => {
+      $scope.toggleLoading(false);
+      return res.json()
+    })
     .then((data) => {
-      console.log('Success:', data);
+      if (data.content) {
+        // 生成成功!
+        let subscription_link = "https://raw.githubusercontent.com/ME70N/sgsRules/main/" + fileName;
+        let sha = data.content.sha;
+        $scope.$applyAsync(function () {
+          $scope.updateError("生成成功!\n 您的订阅地址为: " + subscription_link + "\n 您的密匙为(更新规则需要, 请自行保管): " + sha);
+        });
+      } else {
+        // 生成失败
+        console.warn("生成失败");
+        $scope.$applyAsync(function () {
+          $scope.updateError(data.message);
+        });
+      }
     })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+
   };
 
   // 获取最新规则集合
@@ -201,74 +223,4 @@ sgs.controller("mapListCtrl", function ($scope) {
       $scope.ruleSet[index].rows[i].checked = group.checked;
     }
   };
-
-  // TODO 本地导出WIP
-  // $scope.export = function () {
-  //   function saveAs(blob, filename) {
-  //     var type = blob.type;
-  //     var force_saveable_type = "application/octet-stream";
-  //     if (type && type != force_saveable_type) {
-  //       // 强制下载，而非在浏览器中打开
-  //       var slice = blob.slice || blob.webkitSlice;
-  //       blob = slice.call(blob, 0, blob.size, force_saveable_type);
-  //     }
-
-  //     var url = URL.createObjectURL(blob);
-  //     var save_link = document.createElementNS(
-  //       "http://www.w3.org/1999/xhtml",
-  //       "a"
-  //     );
-  //     save_link.href = url;
-  //     save_link.download = filename;
-
-  //     var event = document.createEvent("MouseEvents");
-  //     event.initMouseEvent(
-  //       "click",
-  //       true,
-  //       false,
-  //       window,
-  //       0,
-  //       0,
-  //       0,
-  //       0,
-  //       0,
-  //       false,
-  //       false,
-  //       false,
-  //       false,
-  //       0,
-  //       null
-  //     );
-  //     save_link.dispatchEvent(event);
-  //     URL.revokeObjectURL(url);
-  //   }
-
-  //   var URL = URL || webkitURL || window;
-  //   var bb = new Blob([JSON.stringify($scope.subscriptions, null, "\t")], {
-  //     type: "text/json",
-  //   });
-  //   saveAs(bb, "sgsRules.json");
-  // };
-
-  // TODO 本地导入WIP
-  // document.getElementById('jsonFile').onchange = function () {
-  //     var resultFile = this.files[0];
-  //     if (resultFile) {
-  //         var reader = new FileReader();
-  //         reader.readAsText(resultFile);
-  //         reader.onload = function (e) {
-  //             try {
-  //                 var data = JSON.parse(this.result);
-  //                 $scope.subscriptions.length = 0;
-  //                 for (var i = 0, len = data.length; i < len; i++) {
-  //                     $scope.subscriptions.push(data[i]);
-  //                 }
-  //                 saveData();
-  //                 location.reload();
-  //             } catch (e) {
-  //                 alert("导入失败，请检查文件格式是否正确");
-  //             }
-  //         };
-  //     }
-  // }
 });
