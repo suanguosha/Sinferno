@@ -14,12 +14,12 @@
         <button
           tabindex="-1"
           class="btn btn-sm"
-          ng-class="switch.enable ? 'btn-success': 'btn-warning'"
+          ng-class="menuOptions.enable ? 'btn-success': 'btn-warning'"
           ng-click="toggleRules()"
         >
-          {{switch.switchText}}
+          {{menuOptions.switchText}}
         </button>
-        <button
+        <!-- <button
           class="btn btn-sm mt-2"
           ng-class="updateStatus.success ? 'btn-success': 'btn-danger'"
           type="button"
@@ -39,7 +39,7 @@
           <span
             ng-if="!updateStatus.showResult"
           >更新规则</span>
-        </button>
+        </button> -->
 
         <a
           href="options.html"

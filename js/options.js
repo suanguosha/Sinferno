@@ -4,6 +4,7 @@ var sgs = angular.module("sgs", []);
 // 初始化订阅
 var initiateSubscription = function (subscriptions) {
   if (subscriptions) return angular.fromJson(subscriptions);
+  return [];
 };
 
 // chrome实例
@@ -133,7 +134,8 @@ sgs.controller("mapListCtrl", function ($scope) {
     if (verify()) {
       if ($scope.editMode === "添加") {
         // deep copy
-        const subscription = angular.copy($scope.curSubscription);
+        let subscription = angular.copy($scope.curSubscription);
+        console.warn(subscription);
         $scope.subscriptions.push(subscription);
       }
       saveData();
