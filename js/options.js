@@ -132,7 +132,9 @@ sgs.controller("mapListCtrl", function ($scope) {
     // 添加 编辑
     if (verify()) {
       if ($scope.editMode === "添加") {
-        $scope.subscriptions.push($scope.curSubscription);
+        // deep copy
+        const subscription = angular.copy($scope.curSubscription);
+        $scope.subscriptions.push(subscription);
       }
       saveData();
       $scope.editDisplay = "none";
