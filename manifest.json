@@ -1,6 +1,6 @@
 {
     "name": "SCAM",
-    "version": "1.8.1",
+    "version": "1.0.0",
     "description": "SCAM(Sanguosha Campaign MAnager a.k.a Sanguosha's Cash grAb Machine) is a visual aid tool for Sanguosha. It helps to block excluded characters on ban-pick menu. You can customize your own rule set with a simple JSON file. This project is inspired by Reres.",
     "manifest_version": 2,
     "browser_action": {
