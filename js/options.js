@@ -2,7 +2,7 @@
 var sgs = angular.module("sgs", []);
 
 // chrome实例
-var storage = chrome.storage.sync;
+var storage = chrome.storage.local;
 
 var defaultSubscription = {
   url: "", // 规则地址
@@ -13,8 +13,8 @@ var defaultSubscription = {
 // controller开始
 sgs.controller("mapListCtrl", function ($scope) {
   //保存订阅到localStorage
-  var saveData = function () {
-    storage.set({ SGSSubs: $scope.subscriptions }, () => {});
+  var saveData = function (key, data) {
+    storage.set({[key]: data}, () => {});
   };
 
   /**
@@ -81,13 +81,15 @@ sgs.controller("mapListCtrl", function ($scope) {
    * 订阅表单
    */
   // 订阅合集
+  $scope.subscriptions = [];
   storage.get(["SGSSubs"], function (data) {
-    $scope.initiateSubscription(data);
+    $scope.initiateSubscription(data.SGSSubs);
   });
   // 初始化订阅
   $scope.initiateSubscription = (data) => {
-    if (Object.keys(data).length === 0) data = [];
-    $scope.subscriptions = data;
+    if (Object.keys(data).length !== 0) {
+      $scope.subscriptions = data;
+    }
   };
   // 当前订阅
   $scope.curSubscription = {
@@ -104,17 +106,23 @@ sgs.controller("mapListCtrl", function ($scope) {
   };
   // 切换订阅
   $scope.changeSubscription = function (sub) {
+    // 取消其他订阅规则的勾选展示
     for (var i = 0, len = $scope.subscriptions.length; i < len; i++) {
       if ($scope.subscriptions[i] !== sub) {
         $scope.subscriptions[i].checked = false;
       }
     }
+    // 更新当前规则
+    saveData("SGSSubs", $scope.subscriptions);
+    saveData("curSub", sub);
   };
   // 编辑订阅
   $scope.editSubscription = function (sub) {
     $scope.curSubscription = sub;
     $scope.editMode = "编辑";
     $scope.editDisplay = "block";
+    $scope.inputError = ""; // 清空错误信息
+    $scope.createDisplay = "none"; // 关闭生成规则
   };
   // 保存订阅
   $scope.saveSubscription = function () {
@@ -136,10 +144,9 @@ sgs.controller("mapListCtrl", function ($scope) {
       if ($scope.editMode === "添加") {
         // deep copy
         let subscription = angular.copy($scope.curSubscription);
-        console.warn(subscription);
         $scope.subscriptions.push(subscription);
       }
-      saveData();
+      saveData("SGSSubs", $scope.subscriptions);
       $scope.editDisplay = "none";
       $scope.createDisplay = "none";
     }
@@ -151,7 +158,7 @@ sgs.controller("mapListCtrl", function ($scope) {
         $scope.subscriptions.splice(i, 1);
       }
     }
-    saveData();
+    saveData("SGSSubs", $scope.subscriptions);
   };
 
   /**
@@ -208,7 +215,6 @@ sgs.controller("mapListCtrl", function ($scope) {
           });
         } else {
           // 生成失败
-          console.warn("生成失败");
           $scope.$applyAsync(function () {
             $scope.updateError(data.message);
           });

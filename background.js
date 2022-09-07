@@ -1,6 +1,6 @@
 "use strict";
 
-var SGSSubs = []; // 订阅规则
+var curSub = []; // 当前订阅规则
 var menuOptions = {
   enable: true, // 是否开启
   switchText: "已开启", // 开关文案
@@ -19,22 +19,24 @@ var typeMap = {
 };
 
 function getStorage() {
-  chrome.storage.sync.get(["menuOptions", "SGSSubs"], function (data) {
-    console.warn(data);
+  chrome.storage.local.get(null, function (data) {
+    if (Object.keys(data).length !== 0) {
+      curSub = data.curSub || [];
+      menuOptions = data.menuOptions || {
+        enable: true, // 是否开启
+        switchText: "已开启", // 开关文案
+      }
+    }
+    console.warn(curSub, menuOptions);
   });
-
-  // SGSSubs = window.localStorage.SGSSubs ? JSON.parse(window.localStorage.SGSSubs) : [];
-  // menuOptions = window.localStorage.menuOptions ? JSON.parse(window.localStorage.menuOptions) : {
-  //   enable: true, // 是否开启
-  //   switchText : "已开启" // 开关文案
-  // };
 }
 
 // This is where all magic happen
 chrome.webRequest.onBeforeRequest.addListener(
   (details) => {
-    // console.warn(menuOptions);
-    if (!menuOptions.enable) return;
+    if (!menuOptions.enable) {
+      return;
+    }
     var url = details.url;
 
     // TODO simple test
@@ -43,7 +45,6 @@ chrome.webRequest.onBeforeRequest.addListener(
      * 动态图片 https://web.sanguosha.com/10/pc/res/assets/runtime/general/big/dynamic/XXXXXX/daiji2.png
      * 静态图片 https://web.sanguosha.com/10/pc/res/assets/runtime/general/seat/static/XXXXX.png
      */
-    // console.warn(url);
     if (
       url.indexOf(
         "https://web.sanguosha.com/10/pc/res/assets/runtime/general/seat/static"
@@ -58,8 +59,8 @@ chrome.webRequest.onBeforeRequest.addListener(
       url =
         "https://avos-cloud-gwibfiplqh86.s3.amazonaws.com/XQ0v3b4ElnH1JANxGESM3Hy3zXPOR64c/dabao_daiji.png";
     }
-    for (var i = 0, len = SGSSubs.length; i < len; i++) {
-      var reg = new RegExp(SGSSubs[i].req, "gi");
+    for (var i = 0, len = curSub.length; i < len; i++) {
+      var reg = new RegExp(curSub[i].req, "gi");
       // FIXME
       reg = new RegExp(
         "https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png",
@@ -69,14 +70,14 @@ chrome.webRequest.onBeforeRequest.addListener(
       // FIXME if CONDITION
       if (
         true ||
-        (SGSSubs[i].checked &&
-          typeof SGSSubs[i].res === "string" &&
+        (curSub[i].checked &&
+          typeof curSub[i].res === "string" &&
           reg.test(url))
       ) {
-        if (!/^file:\/\//.test(SGSSubs[i].res)) {
+        if (!/^file:\/\//.test(curSub[i].res)) {
           console.error("start replacement", url);
           do {
-            url = url.replace(reg, SGSSubs[i].res);
+            url = url.replace(reg, curSub[i].res);
             // FIXME
             let res = "https://tradetest2.xqfunds.com/tougu/images/xq-logo.jpg";
             url = url.replace(reg, res);
@@ -85,7 +86,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         } else {
           // 0902 先不考虑本地file替换
           // do {
-          //     url = getLocalFileUrl(url.replace(reg, SGSSubs[i].res));
+          //     url = getLocalFileUrl(url.replace(reg, curSub[i].res));
           // } while (reg.test(url))
         }
       }

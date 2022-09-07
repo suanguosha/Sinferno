@@ -2,7 +2,7 @@
 var sgs = angular.module("sgs", []);
 
 // chrome实例
-var storage = chrome.storage.sync;
+var storage = chrome.storage.local;
 
 sgs.controller("mapListCtrl", function ($scope) {
   //保存订阅到localStorage
@@ -11,18 +11,20 @@ sgs.controller("mapListCtrl", function ($scope) {
   };
 
   // 规则开关状态
+  $scope.menuOptions = {
+    enable: true, // 是否开启
+    switchText: "已开启", // 开关文案
+  };
   storage.get(["menuOptions"], function (data) {
-    $scope.initiatemenuOptions(data);
+    $scope.initiateMenuOptions(data.menuOptions);
   });
   // 初始化开关
-  $scope.initiatemenuOptions = (data) => {
-    if (Object.keys(data).length === 0) {
-      data = {
-        enable: true, // 是否开启
-        switchText: "已开启", // 开关文案
-      };
+  $scope.initiateMenuOptions = (data) => {
+    if (Object.keys(data).length !== 0) {
+      $scope.$applyAsync(function () {
+        $scope.menuOptions = data;
+      });
     }
-    $scope.menuOptions = data;
   };
 
   // 点击规则开关
