@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 var SGSSubs = []; // 订阅规则
 var menuOptions = {
   enable: true, // 是否开启
-  switchText : "已开启" // 开关文案
+  switchText: "已开启", // 开关文案
 }; // APP开关
 var typeMap = {
   txt: "text/plain",
@@ -18,19 +18,22 @@ var typeMap = {
   webp: "image/webp",
 };
 
-function getLocalStorage() {
-  console.warn("getLocalStorage", window.localStorage.menuOptions);
-  SGSSubs = window.localStorage.SGSSubs ? JSON.parse(window.localStorage.SGSSubs) : [];
-  menuOptions = window.localStorage.menuOptions ? JSON.parse(window.localStorage.menuOptions) : {
-    enable: true, // 是否开启
-    switchText : "已开启" // 开关文案
-  };
+function getStorage() {
+  chrome.storage.sync.get(["menuOptions", "SGSSubs"], function (data) {
+    console.warn(data);
+  });
+
+  // SGSSubs = window.localStorage.SGSSubs ? JSON.parse(window.localStorage.SGSSubs) : [];
+  // menuOptions = window.localStorage.menuOptions ? JSON.parse(window.localStorage.menuOptions) : {
+  //   enable: true, // 是否开启
+  //   switchText : "已开启" // 开关文案
+  // };
 }
 
 // This is where all magic happen
 chrome.webRequest.onBeforeRequest.addListener(
   (details) => {
-    console.warn(menuOptions);
+    // console.warn(menuOptions);
     if (!menuOptions.enable) return;
     var url = details.url;
 
@@ -40,14 +43,20 @@ chrome.webRequest.onBeforeRequest.addListener(
      * 动态图片 https://web.sanguosha.com/10/pc/res/assets/runtime/general/big/dynamic/XXXXXX/daiji2.png
      * 静态图片 https://web.sanguosha.com/10/pc/res/assets/runtime/general/seat/static/XXXXX.png
      */
-    console.warn(url);
-    if (url.indexOf("https://web.sanguosha.com/10/pc/res/assets/runtime/general/seat/static") > -1) {
+    // console.warn(url);
+    if (
+      url.indexOf(
+        "https://web.sanguosha.com/10/pc/res/assets/runtime/general/seat/static"
+      ) > -1
+    ) {
       console.error("更新静态座位图片", url);
-      url = "https://avos-cloud-gwibfiplqh86.s3.amazonaws.com/5Go3rpXLS1ygfFGrue9VTKdfBnA4r7f6/dabao.png"
+      url =
+        "https://avos-cloud-gwibfiplqh86.s3.amazonaws.com/5Go3rpXLS1ygfFGrue9VTKdfBnA4r7f6/dabao.png";
     }
     if (url.indexOf("daiji2.png") > -1) {
       console.error("更新动态座位图片", url);
-      url = "https://avos-cloud-gwibfiplqh86.s3.amazonaws.com/XQ0v3b4ElnH1JANxGESM3Hy3zXPOR64c/dabao_daiji.png"
+      url =
+        "https://avos-cloud-gwibfiplqh86.s3.amazonaws.com/XQ0v3b4ElnH1JANxGESM3Hy3zXPOR64c/dabao_daiji.png";
     }
     for (var i = 0, len = SGSSubs.length; i < len; i++) {
       var reg = new RegExp(SGSSubs[i].req, "gi");
@@ -60,12 +69,12 @@ chrome.webRequest.onBeforeRequest.addListener(
       // FIXME if CONDITION
       if (
         true ||
-        (       SGSSubs[i].checked &&
+        (SGSSubs[i].checked &&
           typeof SGSSubs[i].res === "string" &&
           reg.test(url))
       ) {
         if (!/^file:\/\//.test(SGSSubs[i].res)) {
-            console.error("start replacement", url);
+          console.error("start replacement", url);
           do {
             url = url.replace(reg, SGSSubs[i].res);
             // FIXME
@@ -87,5 +96,5 @@ chrome.webRequest.onBeforeRequest.addListener(
   ["blocking"]
 );
 
-getLocalStorage();
-window.addEventListener("storage", getLocalStorage);
+getStorage();
+chrome.storage.onChanged.addListener(getStorage);

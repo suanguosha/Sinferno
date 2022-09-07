@@ -1,14 +1,8 @@
 "use strict";
 var sgs = angular.module("sgs", []);
 
-// 初始化订阅
-var initiateSubscription = function (subscriptions) {
-  if (subscriptions) return angular.fromJson(subscriptions);
-  return [];
-};
-
 // chrome实例
-var bg = chrome.extension.getBackgroundPage();
+var storage = chrome.storage.sync;
 
 var defaultSubscription = {
   url: "", // 规则地址
@@ -20,19 +14,19 @@ var defaultSubscription = {
 sgs.controller("mapListCtrl", function ($scope) {
   //保存订阅到localStorage
   var saveData = function () {
-    bg.localStorage.SGSSubs = angular.toJson($scope.subscriptions);
+    storage.set({ SGSSubs: $scope.subscriptions }, () => {});
   };
 
   /**
    * loading状态
    */
-  $scope.loadingStatus = false // loading状态
+  $scope.loadingStatus = false; // loading状态
   $scope.toggleLoading = (status) => {
     $scope.loadingStatus = status;
-  } // 修改loading状态
+  }; // 修改loading状态
   $scope.updateError = (message) => {
     $scope.inputError = message;
-  } // 修改网络请求报错
+  }; // 修改网络请求报错
 
   /**
    * 导航菜单
@@ -43,7 +37,7 @@ sgs.controller("mapListCtrl", function ($scope) {
   $scope.importSubscription = function (curSubscription) {
     $scope.inputError = ""; // 清空错误信息
     $scope.createDisplay = "none"; // 关闭生成规则
-    if ($scope.editDisplay === "none" || $scope.editMode === '生成') {
+    if ($scope.editDisplay === "none" || $scope.editMode === "生成") {
       if (!curSubscription) {
         $scope.curSubscription = defaultSubscription;
       }
@@ -87,7 +81,14 @@ sgs.controller("mapListCtrl", function ($scope) {
    * 订阅表单
    */
   // 订阅合集
-  $scope.subscriptions = initiateSubscription(bg.localStorage.SGSSubs);
+  storage.get(["SGSSubs"], function (data) {
+    $scope.initiateSubscription(data);
+  });
+  // 初始化订阅
+  $scope.initiateSubscription = (data) => {
+    if (Object.keys(data).length === 0) data = [];
+    $scope.subscriptions = data;
+  };
   // 当前订阅
   $scope.curSubscription = {
     ...defaultSubscription,
@@ -173,41 +174,46 @@ sgs.controller("mapListCtrl", function ($scope) {
     };
     let fileName = `${$scope.curSubscription.title}.json`;
     let body = {
-      "message": "上传规则: " + `${$scope.curSubscription.title}`,
-      "content": btoa(unescape(encodeURIComponent(JSON.stringify(sgsRules))))
-    }
+      message: "上传规则: " + `${$scope.curSubscription.title}`,
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(sgsRules)))),
+    };
     if ($scope.curSubscription.sha) {
       body.sha = $scope.curSubscription.sha;
     }
-    fetch('https://api.github.com/repos/ME70N/sgsRules/contents/' + fileName, {
-      method: 'PUT',
+    fetch("https://api.github.com/repos/ME70N/sgsRules/contents/" + fileName, {
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     })
-    .then((res) => {
-      $scope.toggleLoading(false);
-      return res.json()
-    })
-    .then((data) => {
-      if (data.content) {
-        // 生成成功!
-        let subscription_link = "https://raw.githubusercontent.com/ME70N/sgsRules/main/" + fileName;
-        let sha = data.content.sha;
-        $scope.$applyAsync(function () {
-          $scope.updateError("生成成功!\n 您的订阅地址为: " + subscription_link + "\n 您的密匙为(更新规则需要, 请自行保管): " + sha);
-        });
-      } else {
-        // 生成失败
-        console.warn("生成失败");
-        $scope.$applyAsync(function () {
-          $scope.updateError(data.message);
-        });
-      }
-    })
-
+      .then((res) => {
+        $scope.toggleLoading(false);
+        return res.json();
+      })
+      .then((data) => {
+        if (data.content) {
+          // 生成成功!
+          let subscription_link =
+            "https://raw.githubusercontent.com/ME70N/sgsRules/main/" + fileName;
+          let sha = data.content.sha;
+          $scope.$applyAsync(function () {
+            $scope.updateError(
+              "生成成功!\n 您的订阅地址为: " +
+                subscription_link +
+                "\n 您的密匙为(更新规则需要, 请自行保管): " +
+                sha
+            );
+          });
+        } else {
+          // 生成失败
+          console.warn("生成失败");
+          $scope.$applyAsync(function () {
+            $scope.updateError(data.message);
+          });
+        }
+      });
   };
 
   // 获取最新规则集合
