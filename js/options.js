@@ -70,8 +70,9 @@ sgs.controller("mapListCtrl", function ($scope) {
       alert("请选中需要分享的订阅规则！");
       return;
     }
+    let text = "【" + $scope.subscriptions[curRuleIndex].title + "】" + $scope.subscriptions[curRuleIndex].url;
     navigator.clipboard
-      .writeText($scope.subscriptions[curRuleIndex].url)
+      .writeText(text)
       .then(() => {
         alert("已将订阅规则复制到剪贴板！");
       });
