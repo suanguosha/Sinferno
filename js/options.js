@@ -8,6 +8,8 @@ var defaultSubscription = {
   url: "", // 规则地址
   title: "", // 规则标题
   comment: "", // 规则备注
+  sha: "", // sha
+  ruleSet: [] // ruleSet
 };
 
 // controller开始
@@ -37,20 +39,20 @@ sgs.controller("mapListCtrl", function ($scope) {
   $scope.importSubscription = function (curSubscription) {
     $scope.inputError = ""; // 清空错误信息
     $scope.createDisplay = "none"; // 关闭生成规则
-    if ($scope.editDisplay === "none" || $scope.editMode === "生成") {
+    if ($scope.saveDisplay === "none" || $scope.saveMode === "生成") {
       if (!curSubscription) {
         $scope.curSubscription = defaultSubscription;
       }
-      $scope.editMode = "添加";
-      $scope.editDisplay = "block";
+      $scope.saveMode = "添加";
+      $scope.saveDisplay = "block";
     } else {
-      $scope.editMode === "添加" && ($scope.editDisplay = "none");
+      $scope.saveMode === "添加" && ($scope.saveDisplay = "none");
     }
   };
   // 生成规则
   $scope.openCreator = function () {
     $scope.inputError = ""; // 清空错误信息
-    $scope.editDisplay = "none"; // 关闭添加规则
+    $scope.saveDisplay = "none"; // 关闭添加规则
     if ($scope.createDisplay === "none") {
       $scope.createDisplay = "block";
     } else {
@@ -94,16 +96,15 @@ sgs.controller("mapListCtrl", function ($scope) {
   };
   // 当前订阅
   $scope.curSubscription = {
-    ...defaultSubscription,
-    sha: "",
-    checked: true,
+    ...defaultSubscription
   };
-  $scope.editDisplay = "none"; //订阅编辑框显示状态
-  $scope.editMode = "添加"; //订阅编辑框保存按钮文本 添加/编辑 添加则新增规则 编辑则修改规则
+  $scope.saveDisplay = "none"; //订阅编辑框显示状态
+  $scope.saveMode = "添加"; //订阅编辑框保存按钮文本 添加/编辑 添加则新增规则 编辑则修改规则
   $scope.inputError = ""; //输入错误时候的警告
   // 关闭订阅表单
   $scope.hideEditBox = function () {
-    $scope.editDisplay = "none";
+    $scope.saveDisplay = "none";
+    $scope.inputError = "";
   };
   // 切换订阅
   $scope.changeSubscription = function (sub) {
@@ -120,8 +121,8 @@ sgs.controller("mapListCtrl", function ($scope) {
   // 编辑订阅
   $scope.editSubscription = function (sub) {
     $scope.curSubscription = sub;
-    $scope.editMode = "编辑";
-    $scope.editDisplay = "block";
+    $scope.saveMode = "编辑";
+    $scope.saveDisplay = "block";
     $scope.inputError = ""; // 清空错误信息
     $scope.createDisplay = "none"; // 关闭生成规则
   };
@@ -136,20 +137,29 @@ sgs.controller("mapListCtrl", function ($scope) {
       return true;
     };
     // 生成
-    if ($scope.editMode == "生成") {
+    if ($scope.saveMode == "生成") {
       $scope.uploadRule();
       return;
     }
     // 添加 编辑
     if (verify()) {
-      if ($scope.editMode === "添加") {
-        // deep copy
-        let subscription = angular.copy($scope.curSubscription);
-        $scope.subscriptions.push(subscription);
-      }
-      saveData("SGSSubs", $scope.subscriptions);
-      $scope.editDisplay = "none";
-      $scope.createDisplay = "none";
+      $scope.fetchSubscription($scope.curSubscription.url).then((res) => {
+        $scope.$applyAsync(function () {
+          if ($scope.saveMode === "添加") {
+            // 从订阅地址中取规则, 和标题&备注(如果没写)
+            $scope.curSubscription.title = $scope.curSubscription.title || res.title;
+            $scope.curSubscription.comment = $scope.curSubscription.comment || res.comment;
+            $scope.curSubscription.ruleSet = res.ruleSet;
+
+            // deep copy
+            let subscription = angular.copy($scope.curSubscription);
+            $scope.subscriptions.push(subscription);
+          }
+          saveData("SGSSubs", $scope.subscriptions);
+          $scope.saveDisplay = "none";
+          $scope.createDisplay = "none";
+        });
+      });
     }
   };
   // 删除订阅
@@ -168,8 +178,8 @@ sgs.controller("mapListCtrl", function ($scope) {
   $scope.createDisplay = "none"; // 订阅编辑框显示状态
   // 生成规则
   $scope.createRule = function () {
-    $scope.editMode = "生成";
-    $scope.editDisplay = "block";
+    $scope.saveMode = "生成";
+    $scope.saveDisplay = "block";
   };
   // 上传规则
   $scope.uploadRule = () => {
@@ -239,5 +249,29 @@ sgs.controller("mapListCtrl", function ($scope) {
     for (var i = 0, len = $scope.ruleSet[index].rows.length; i < len; i++) {
       $scope.ruleSet[index].rows[i].checked = group.checked;
     }
+  };
+  
+  // 获取订阅规则详情
+  // 更新规则状态
+  $scope.updateStatus = {
+    loading :false
+  }
+  $scope.fetchSubscription = function (url) {
+    $scope.updateStatus.loading = true;
+    return new Promise((resolve) => {
+      fetch(url + "?timestamp=" + Math.random()).then((res) => {
+        // scope $apply 防止angular不更新view
+        $scope.$applyAsync(function () {
+          $scope.updateStatus.loading = false;
+          if (res.ok) {
+            res.json().then((res) => {
+              resolve(res);
+            });
+          } else {
+            $scope.inputError = "获取规则失败, 请检查订阅地址!";
+          }
+        })
+      });
+    }); 
   };
 });

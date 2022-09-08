@@ -36,33 +36,4 @@ sgs.controller("mapListCtrl", function ($scope) {
     // TODO 开启关闭功能
     saveData($scope.menuOptions);
   };
-
-  // // 更新规则状态
-  // $scope.updateStatus = {
-  //     loading :false,
-  //     success: true,
-  //     showResult: false
-  // }
-
-  // // 点击更新规则
-  // $scope.updateRules = function () {
-  //     $scope.updateStatus.loading = true;
-  //     $scope.updateStatus.showResult = false;
-  //     fetch("https://raw.githubusercontent.com/LDY681/LDY681.github.io/master/sgsRules.json?timestamp=" + Math.random()).then((res) => {
-  //         // scope $apply 防止angular不更新view
-  //         $scope.$apply(function () {
-  //             $scope.updateStatus.loading = false;
-  //             if (res.ok) {
-  //                 $scope.updateStatus.success = true;
-  //                 $scope.updateStatus.showResult = true;
-  //                 res.json().then((res) => {
-  //                     console.log(res)
-  //                 });
-  //             } else {
-  //                 $scope.updateStatus.success = false;
-  //                 $scope.updateStatus.showResult = true;
-  //             }
-  //         })
-  //     });
-  // };
 });

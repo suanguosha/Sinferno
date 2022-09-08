@@ -41,6 +41,9 @@
     </div>
 
     <div class="mx-4">
+      <!-- 错误日志 -->
+      <div class="mt-3 errorMsg">{{inputError}}</div>
+
       <!-- 生成禁将规则 -->
       <div style="display:{{createDisplay}};" class="mx-4">
         <label class="mt-4">选择禁止的武将</label>
@@ -60,14 +63,13 @@
       </div>
 
       <!-- 导入/编辑/生成订阅规则 -->
-      <div style="display:{{editDisplay}};" class="editBox mx-4">
+      <div style="display:{{saveDisplay}};" class="editBox mx-4">
         <button
           type="button"
           class="btn-close"
           ng-click="hideEditBox()"
         ></button>
-        <div class="errorMsg">{{inputError}}</div>
-        <div class="mt-4" ng-if="editMode != '生成'">
+        <div class="mt-4" ng-if="saveMode != '生成'">
           <label for="sub">订阅规则</label>
           <input
             type="text"
@@ -94,7 +96,7 @@
             ng-model="curSubscription.comment"
           />
         </div>
-        <div class="mt-2" ng-if="editMode == '生成'">
+        <div class="mt-2" ng-if="saveMode == '生成'">
           <label for="sha">密钥(更新旧规则请填, 生成新规则不填!):</label>
           <input
             type="text"
@@ -105,13 +107,14 @@
         </div>
         <button class="mt-2 btn-block btn btn-primary" ng-click="saveSubscription()">
           <span
-            ng-if="createStatus.loading"
+            ng-if="updateStatus.loading"
             class="spinner-border spinner-border-sm"
             role="status"
           ></span>
-        {{ editMode }}
+        {{ saveMode }}
         </button>
       </div>
+
       <!-- 订阅规则列表 -->
       <table class="col-12 table table-hover table-bordered">
         <thead>
