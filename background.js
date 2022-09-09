@@ -22,7 +22,6 @@ var typeMap = {
 
 // 获取最新图片规则
 function fetchCharacterMap() {
-  console.log("fetchCharacterMap");
   fetch("./characterMap.json")
     .then((res) => res.json())
     .then((response) => {
@@ -80,11 +79,9 @@ chrome.webRequest.onBeforeRequest.addListener(
       let staticRegex = /https*?:\/\/web\.sanguosha\.com\/10\/pc\/res\/assets\/runtime\/general\/seat\/static\/(\w+)/;
       let character = url.match(staticRegex)[1]
       character = character.substring(1, character.length -1)
-      console.error("静态座位图片 ", url, character);
       // 如果匹配 则更新
       if (banPool.indexOf(character) != -1) {
         url = "https://avos-cloud-gwibfiplqh86.s3.amazonaws.com/5Go3rpXLS1ygfFGrue9VTKdfBnA4r7f6/dabao.png";
-        console.error("match! 进行替换 ", character);
       }  
     }
     if (url.indexOf("web.sanguosha.com/10/pc/res/assets/runtime/general/big/dynamic") > -1) {
@@ -92,11 +89,9 @@ chrome.webRequest.onBeforeRequest.addListener(
       let staticRegex = /https*?:\/\/web\.sanguosha\.com\/10\/pc\/res\/assets\/runtime\/general\/big\/dynamic\/(\w+)/;
       let character = url.match(staticRegex)[1]
       character = character.substring(1, character.length -1)
-      console.error("动态座位图片 ", url, character);
       // 如果匹配 则更新
       if (banPool.indexOf(character) != -1) {
         url = "https://avos-cloud-gwibfiplqh86.s3.amazonaws.com/XQ0v3b4ElnH1JANxGESM3Hy3zXPOR64c/dabao_daiji.png";
-        console.error("match! 进行替换 ", character);
       }  
     }
     return url === details.url ? {} : { redirectUrl: url };

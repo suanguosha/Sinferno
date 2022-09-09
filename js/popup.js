@@ -33,7 +33,35 @@ sgs.controller("mapListCtrl", function ($scope) {
       enable: !$scope.menuOptions.enable,
       switchText: "已" + ($scope.menuOptions.enable ? "关闭" : "开启"),
     };
-    // TODO 开启关闭功能
     saveData($scope.menuOptions);
+  };
+
+  // 检查更新
+  $scope.updateStatus = {
+    show: false,
+    link: ""
+  }
+  var localVersion = chrome.runtime.getManifest().version;
+  fetch(
+    "https://raw.githubusercontent.com/suanguosha/SCAM/main/release/release.json"
+  )
+    .then((res) => res.json())
+    .then((response) => {
+      if (response[0].version > localVersion) {
+        console.warn(response[0].version, localVersion);
+        $scope.$applyAsync(function () {
+          $scope.updateStatus = {
+            show: true,
+            link: response[0].link,
+            version: response[0].version
+          }
+        });
+      }
+    });
+  $scope.goDownload = function () {
+    window.open(
+      $scope.updateStatus.link,
+      '_blank'
+    );
   };
 });
