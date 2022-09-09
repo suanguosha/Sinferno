@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html ng-app="sgs">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/popup.css" />
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script type="text/javascript" src="js/popup.js"></script>
+  </head>
+  <body ng-controller="mapListCtrl">
+    <div class="container d-flex flex-column">
+      <p class="fw-semibold text-center">三国杀群内助手</p>
+      <button
+        tabindex="-1"
+        class="btn btn-sm"
+        ng-class="menuOptions.enable ? 'btn-success': 'btn-warning'"
+        ng-click="toggleRules()"
+      >
+        {{menuOptions.switchText}}
+      </button>
+      <a
+        href="options.html"
+        target="_blank"
+        tabindex="-1"
+        class="btn btn-primary btn-sm mt-2"
+        >管理规则</a
+      >
+      <button
+        tabindex="-1"
+        ng-if="updateStatus.show"
+        ng-click="goDownload()"
+        class="btn btn-danger btn-sm mt-2"
+      >
+        新版本 v{{ updateStatus.version }}
+      </button>
+      <!-- 快捷菜单 -->
+      <div class="mt-4 d-flex justify-content-center">
+        <a
+          target="_blank"
+          class="icon"
+          href="https://github.com/suanguosha/SCAM/issues"
+          ><img width="30" height="30" src="image/github.svg" alt="问题反馈"
+        /></a>
+        <a
+          target="_blank"
+          class="icon"
+          href="https://jq.qq.com/?_wv=1027&k=lepPr9GF"
+          ><img width="30" height="30" src="image/qq.svg" alt="加入Q群"
+        /></a>
+        <a
+          target="_blank"
+          class="icon"
+          href="https://suanguosha.com"
+          ><img width="30" height="30" src="image/website.svg" alt="访问网站"
+        /></a>
+        <a target="_blank" class="icon" href="mailto:melon@suanguosha.com"
+          ><img width="30" height="30" src="image/email.svg" alt="联系作者"
+        /></a>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html ng-app="sgs">
+  <head>
+    <meta charset="UTF-8" />
+    <title>三国杀群内助手</title>
+    <link rel="icon" href="icon.png" mce_href="icon.png" type=”image/x-icon”>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/options.css" />
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script type="text/javascript" src="js/options.js"></script>
+  </head>
+  <body ng-controller="mapListCtrl" class="d-flex flex-column justify-center">
+    <!-- 导航栏 -->
+    <div class="navbar navbar-dark bg-dark">
+      <div class="container">
+        <div class="btnBox d-flex flex-row">
+          <span class="h2 text-light"
+            ><a
+              class="text-decoration-none"
+              title="三国杀群内助手"
+              href=""
+              target="_blank"
+              >SCAM 三国杀群内助手</a
+            ></span
+          >
+          <div class="ms-5 d-flex flex-row">
+            <button class="btn btn-success ms-2 px-4" ng-click="importSubscription()">
+              添加
+            </button>
+            <button class="btn btn-success ms-2 px-4" ng-click="openCreator()">
+              生成
+            </button>
+            <button class="btn btn-primary ms-2 px-4" ng-click="exportRules()">
+              分享
+            </button>
+            <!-- <button class="file btn btn-danger ms-2 px-3">导入<input type="file" id="jsonFile"/></div>
+                    <button class="btn btn-info ms-2 px-3" ng-click="exportFile()">导出</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mx-4">
+      <!-- 错误日志 -->
+      <div class="mt-3 errorMsg">{{inputError}}</div>
+
+      <!-- 生成禁将规则 -->
+      <div style="display:{{createDisplay}};" class="mx-4">
+        <label class="mt-4">选择禁止的武将</label>
+        <div class="d-flex flex-wrap mt-3 border-bottom border-success" ng-repeat="group in ruleSet track by $index">
+          <!-- 全选武将 -->
+          <input class="form-check-input" type="checkbox" id="$index" ng-model="group.checked" ng-change="toggleRuleGroup(group, $index)">
+          <label class="me-1">{{ group.title }}:&nbsp;&nbsp;</label>
+          <div class="form-check form-check-inline" ng-repeat="character in group.rows track by $index">
+            <!-- 单选武将 -->
+            <input class="form-check-input" type="checkbox" id="character.key" ng-model="character.checked">
+            <label class="form-check-label" for="character.key">{{character.name}}&nbsp;&nbsp;</label>
+          </div>
+        </div>
+        <button class="mt-4 btn-block btn btn-primary" ng-click="createRule()">
+          下一步
+        </button>
+      </div>
+
+      <!-- 导入/编辑/生成订阅规则 -->
+      <div style="display:{{saveDisplay}};" class="editBox mx-4">
+        <button
+          type="button"
+          class="btn-close"
+          ng-click="hideEditBox()"
+        ></button>
+        <div class="mt-4" ng-if="saveMode != '生成'">
+          <label for="sub">订阅规则</label>
+          <input
+            type="text"
+            class="form-control"
+            id="sub"
+            ng-model="curSubscription.url"
+          />
+        </div>
+        <div class="mt-2">
+          <label for="title">标题:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            ng-model="curSubscription.title"
+          />
+        </div>
+        <div class="mt-2">
+          <label for="comment">备注:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="comment"
+            ng-model="curSubscription.comment"
+          />
+        </div>
+        <div class="mt-2" ng-if="saveMode == '生成'">
+          <label for="sha">密钥(更新旧规则请填, 生成新规则不填!):</label>
+          <input
+            type="text"
+            class="form-control"
+            id="sha"
+            ng-model="curSubscription.sha"
+          />
+        </div>
+        <button class="mt-2 btn-block btn btn-primary" ng-click="saveSubscription()">
+          <span
+            ng-if="updateStatus.loading"
+            class="spinner-border spinner-border-sm"
+            role="status"
+          ></span>
+        {{ saveMode }}
+        </button>
+      </div>
+
+      <!-- 订阅规则列表 -->
+      <table class="col-12 table table-hover table-bordered">
+        <thead>
+          <td>开启</td>
+          <td>标题</td>
+          <td>备注</td>
+          <td>地址</td>
+          <td>操作</td>
+        </thead>
+        <tbody>
+          <tr ng-repeat="sub in subscriptions track by $index">
+            <td class="checkbox">
+              <input
+                type="checkbox"
+                ng-model="sub.checked"
+                ng-click="changeSubscription(sub)"
+              />
+            </td>
+            <td><div title="{{sub.title}}">{{sub.title}}</div></td>
+            <td><div title="{{sub.comment}}">{{sub.comment}}</div></td>
+            <td><div title="{{sub.url}}">{{sub.url}}</div></td>
+            <td>
+              <button
+                ng-click="editSubscription(sub)"
+                type="button"
+                class="btn btn-primary btn-sm edit"
+              >
+                编辑
+              </button>
+              <button
+                ng-click="removeSubscription(sub)"
+                type="button"
+                class="btn btn-default btn-sm remove"
+              >
+                删除
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

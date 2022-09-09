@@ -1,0 +1,29 @@
+{
+    "name": "SCAM",
+    "version": "1.0.0",
+    "description": "SCAM(Sanguosha Campaign Assitant Module) is a visual aid tool for Sanguosha. It helps to block excluded characters on ban-pick menu. You can customize your own rule set with a simple JSON file.",
+    "manifest_version": 2,
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_title": "SCAM",
+        "default_popup": "popup.html"
+    },
+    "options_page": "options.html",
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": true
+    },
+    "icons":
+    {
+        "16": "icon.png",
+        "48": "icon48.png"
+    },
+    "permissions": [
+        "tabs",
+        "webRequest",
+        "webRequestBlocking",
+        "<all_urls>",
+        "storage"
+    ],
+    "update_url": "http://clients2.google.com/service/update2/crx"
+} 
